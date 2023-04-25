@@ -94,7 +94,7 @@ def trackpavementangle(img_result):
         #time.sleep(3)
         while True:
             #print("reading camera")
-            global doneturn
+            #global doneturn
             ret, img = cap.read()
            # print(f'ret: {ret} img: {img}')
             #cap.release()
@@ -107,14 +107,14 @@ def trackpavementangle(img_result):
             columns = dim[1]
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             #(hue,sat,value)
-            if not doneturn:
+            #if not doneturn:
                 #print("original mask")
-                lower_thresh = np.array([30,100,95])
-                upper_thresh = np.array([100,255,225])
-            else:
+            #lower_thresh = np.array([30,100,95])
+            #upper_thresh = np.array([100,255,225])
+            #else:
                 #print("post turn mask")
-                lower_thresh = np.array([30,44,95])
-                upper_thresh = np.array([100,255,225])
+            lower_thresh = np.array([30,44,95])
+            upper_thresh = np.array([100,255,225])
             mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
             cv2.imwrite('Cameratester.png',img)
             cv2.imwrite('CameratestMask.png',mask)
@@ -129,7 +129,7 @@ def trackpavementangle(img_result):
                 cx = int(moments['m10']/moments['m00'])
                 cy = int(moments['m01']/moments['m00'])
                 error = 320 - cx
-                #print(error)
+                print(error)
                 if error > 70:
                     #steer needs to be smaller angle
                     img_result.put(-5)
@@ -192,11 +192,11 @@ def process_data(data):
             turnAngle = 180 
             doneturn = True
     
-    if distance < 3500 and not turning and (time.time() - delay) > 3 and distance!=0:
+    elif distance < 3500 and not turning and (time.time() - delay) > 3 and distance!=0:
         print("angle reset to 77")
         turnAngle = 77
 
-    if turning and ((time.time()-systime)>0.75): #and turndist < 2500: #distance : #and ((time.time() - systime) > 1.15):
+    if turning and ((time.time()-systime)>0.6): #and turndist < 2500: #distance : #and ((time.time() - systime) > 1.15):
         print("Stop Turning!")
         turning = False
         turnAngle = 77
