@@ -219,7 +219,7 @@ try:
 except KeyboardInterrupt:
     print('Stoping.')
     momo.Motor_Speed(pca,0)
-    
+    img_result.queue.clear()
 lidar.stop()
 lidar.disconnect()
 
