@@ -106,7 +106,7 @@ def trackpavementangle(img_result):
             columns = dim[1]
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             #(hue,sat,value)
-            lower_thresh = np.array([30,40,95])
+            lower_thresh = np.array([30,45,95])
             upper_thresh = np.array([100,255,225])
             mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
             cv2.imwrite('Cameratester.png',img)
