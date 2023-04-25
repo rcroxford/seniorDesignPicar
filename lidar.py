@@ -23,7 +23,7 @@ import pygame
 from adafruit_rplidar import RPLidar
 import time
 import numpy as np
-import motorControl as momo
+#import motorControl as momo
 import busio
 from board import SCL, SDA
 from adafruit_pca9685 import PCA9685
@@ -39,7 +39,7 @@ pca.frequency = 100
 channel_num = 14
 servo7 = servo.Servo(pca.channels[channel_num])
 
-momo.Servo_Motor_Initialization()
+#momo.Servo_Motor_Initialization()
 #momo.Motor_Start(pca)
 #servo7.angle = 75.25
 #momo.Motor_Speed(pca,0.25)
@@ -66,12 +66,20 @@ steerError = 0
 thread = 0
 #pylint: disable=redefined-outer-name,global-statement
 img_result = queue.Queue()
-servo7.angle = turnAngle
 
+servo7.angle = 180
+time.sleep(1)
+servo7.angle = 0
+time.sleep(1)
+servo7.angle = turnAngle
+time.sleep(1)
 #cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
 #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 80)
-momo.Motor_Speed(pca,0.25)
+import motorControl as momo
+
+momo.Motor_Speed(pca,0.175)
+
 def trackpavementangle(img_result):
     
     try:
@@ -85,11 +93,11 @@ def trackpavementangle(img_result):
            # print("camera opened")
         #time.sleep(3)
         while True:
-            print("reading camera")
+            #print("reading camera")
             ret, img = cap.read()
            # print(f'ret: {ret} img: {img}')
             #cap.release()
-            print("camera read")
+            #print("camera read")
             #if not img:
               #  print("no image")
               #  continue
@@ -114,7 +122,7 @@ def trackpavementangle(img_result):
                 cx = int(moments['m10']/moments['m00'])
                 cy = int(moments['m01']/moments['m00'])
                 error = 320 - cx
-                print(error)
+                #print(error)
                 if error > 70:
                     #steer needs to be smaller angle
                     img_result.put(-5)
@@ -126,7 +134,7 @@ def trackpavementangle(img_result):
 
     except KeyboardInterrupt:
         cap.release()
-        print("camera released")
+        #print("camera released")
 
 def process_data(data):
     #global max_distance
@@ -150,17 +158,18 @@ def process_data(data):
         #print("waiting for image")
     #else:
     if not img_result.empty():
-        print("image proccessed")
+        #print("image proccessed")
         #thread.join()
         steerError = img_result.get()
-        print(f'steerError: {steerError}')
-        turnAngle = turnAngle + steerError
-        if turnAngle < 71:
-            turnAngle = 70
-        elif turnAngle > 84:
-            turnAngle = 85
+        #print(f'steerError: {steerError}')
+        if not turning:
+            turnAngle = turnAngle + steerError
+            if turnAngle < 67:
+                turnAngle = 67
+            elif turnAngle > 82:
+                turnAngle = 82
         #isThreading = False
-        print(f'turnangle: {turnAngle}')
+        #print(f'turnangle: {turnAngle}')
         #momo.Motor_Speed(pca,0.25)
 
     distance = data[359]
@@ -168,18 +177,23 @@ def process_data(data):
     #print(f'360:{distance}')
     #print(f'115:{turndist}')
     #print(data)
-    if distance < 3500 and not turning and not doneturn:                  # ignore initially ungathered data points 
+    if distance < 1500 and not turning and not doneturn:                  # ignore initially ungathered data points 
       if (time.time() - delay) > 3 and distance!=0:
-            print("quick! turn!")
+            print("quick! turn! really fast! get out the way! this is unneccessarily long!")
             turning = True
             systime = time.time()
-            servo7.angle = 180 
+            turnAngle = 180 
             doneturn = True
+    
+    if distance < 3500 and not turning and (time.time() - delay) > 3 and distance!=0:
+        print("angle reset to 77")
+        turnAngle = 77
 
-    if turning and ((time.time()-systime)>0.3): #and turndist < 2500: #distance : #and ((time.time() - systime) > 1.15):
+    if turning and ((time.time()-systime)>0.75): #and turndist < 2500: #distance : #and ((time.time() - systime) > 1.15):
         print("Stop Turning!")
         turning = False
-        servo7.angle = 77
+        turnAngle = 77
+        momo.Motor_Speed(pca,0.14)
 
     #if ((time.time()-systime)>4):
     #    print("extra angle")
