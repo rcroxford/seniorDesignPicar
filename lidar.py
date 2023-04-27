@@ -109,12 +109,12 @@ def trackpavementangle(img_result):
             #(hue,sat,value)
             #if not doneturn:
                 #print("original mask")
-            #lower_thresh = np.array([30,100,95])
-            #upper_thresh = np.array([100,255,225])
+            lower_thresh = np.array([30,100,95])
+            upper_thresh = np.array([100,255,225])
             #else:
                 #print("post turn mask")
-            lower_thresh = np.array([30,44,95])
-            upper_thresh = np.array([100,255,225])
+            #lower_thresh = np.array([30,44,95])
+            #upper_thresh = np.array([100,255,225])
             mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
             cv2.imwrite('Cameratester.png',img)
             cv2.imwrite('CameratestMask.png',mask)
@@ -132,10 +132,10 @@ def trackpavementangle(img_result):
                 print(error)
                 if error > 70:
                     #steer needs to be smaller angle
-                    img_result.put(-5)
+                    img_result.put(-10)
                 elif error < -70:
                     #steern need to the larger angle
-                    img_result.put(5) 
+                    img_result.put(10) 
                 else:
                     img_result.put(0)
 
@@ -200,7 +200,7 @@ def process_data(data):
         print("Stop Turning!")
         turning = False
         turnAngle = 77
-        momo.Motor_Speed(pca,0.14)
+        momo.Motor_Speed(pca,0.155)
 
     #if ((time.time()-systime)>4):
     #    print("extra angle")
