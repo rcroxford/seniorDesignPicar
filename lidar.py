@@ -109,12 +109,12 @@ def trackpavementangle(img_result):
             #(hue,sat,value)
             #if not doneturn:
                 #print("original mask")
-            lower_thresh = np.array([30,100,95])
-            upper_thresh = np.array([100,255,225])
+            #lower_thresh = np.array([30,100,95])
+            #upper_thresh = np.array([100,255,225])
             #else:
                 #print("post turn mask")
-            #lower_thresh = np.array([30,44,95])
-            #upper_thresh = np.array([100,255,225])
+            lower_thresh = np.array([30,44,95])
+            upper_thresh = np.array([100,255,225])
             mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
             cv2.imwrite('Cameratester.png',img)
             cv2.imwrite('CameratestMask.png',mask)
